@@ -1,5 +1,7 @@
 book_filename: "multivariado2"
 new_session: true
+view: https://github.com/mauroloprete/multivariado2
+edit: https://github.com/mauroloprete/multivariado2
 before_chapter_script: _common.R
 delete_merged_file: true
 language:
