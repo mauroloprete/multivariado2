@@ -1,0 +1,58 @@
+# Statistical learning
+
+
+## Ejercicio extra {-}
+
+Pasar en limpio
+
+![Alt](./ejercicio1.pdf){width=100% height=400}
+
+
+## Ejercicio 1 {-}
+
+
+*For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible statistical learning method to be better or worse than an inflexible method. Justify your answer.*
+
+- **(a) The sample size $n$ is extremely large, and the number of predictors $p$ is small.**
+
+    Al que tenemos un tamaño de muestra lo suficientemente grande y estamos restrictos a una cantidad chica de predictores, es útil utilizar un método flexible ya que tenemos la posibilidad de realizar 'aproximaciones locales' sin
+    arriesgarnos al problema del sobreajuste.
+
+    El tener un tamaño de muestra grande implica que pequeñas perturbaciones en nuestros datos la flexibilidad que demos al modelo, no afecten en el ajuste de los parámetros.
+
+-  **(b)The number of predictors $p$ is extremely large, and the number of observations $n$ is small.**
+
+    Este caso es el contrario al anterior, al tener una cantidad grande de predictores y una muestra chica, al usar un método flexible corremos un alto riesgo de estar frente a un modelo que sobreajusta y con poco poder predictivo fuera
+    de la muestra.
+
+    Además, si consideramos el costo computacional de tener una gran cantidad de parámetros utilizar modelos flexibles el costo es aún mayor que uno menos flexible. Como mencioné anteriormente, al tener un tamaño de muestra pequeño,
+    pequeñas perturbaciones en los datos puede llegar a diferentes conclusiones si utilizamos modelos flexible.
+
+-  **(c) The relationship between the predictors and response is highly non-linear.**
+
+    Para esta situación es altamente recomendable utilizar un método flexible para tratar de modelar esa no linealidad en la que nos enfrentamos inicialmente, un ejemplo los modelos GAMM.
+
+
+-  **(d) The variance of the error terms, i.e. $\sigma^{2} = Var(\varepsilon)$, is extremely high.**
+
+    Dentro del ECM podemos descomponer entre un error reducible y uno irreducible, por hipotesís este último es alto, el error que se encuentra bajo nuestro controlo refiere a la discrepencia entre nuestra variable de respuesta
+    y nuestro modelo, la elección de un método inflexible sería una buena idea ya que en este caso reducimos las chances de obtener sobreajuste debido a utilizar un modelo demasiado flexible.
+
+
+## Ejercicio 5 {-}
+
+*What are the advantages and disadvantages of a very flexible (versus a less flexible) approach for regression or classification? Under what circumstances might a more flexible approach be preferred to a less flexible approach? When might a less flexible approach be preferred?*
+
+Utilizar un entoque muy flexible nos permite realizar un mayor ajuste que respecto a un modelo lineal, **reducimos el sesgo pero aumentamos la varianza**. Desde el punto de vista computacional debemos de estimar una mayor cantidad de parámetros,
+en algunas situaciones puede ser un tema a considerar en el caso que nuestro no problema sea 'usual', esto decir, implica recurrir a métodos numéricos que quizás no esten implementados, sean demasiado costosos o el único camino sea utilizar simulaciones para aproximar la solución.
+
+En algunos casos se recomienda utilizar modelos inflexibles tanto en el contexto de regressión o clasificación cuando tenemos un tamaño de muestra reducido ya que en caso contrario modelos flexibles sufren del problema del sobreajuste, 
+dificultando la inferencia además de perder interpretabilidad en algun tipo de especificación.
+
+## Ejercicio 6 {-}
+
+*Describe the differences between a parametric and a non-parametric statistical learning approach. What are the advantages of a parametric approach to regression or classification (as opposed to a nonparametric approach)? What are its disadvantages?*
+
+Utilizar un enfoque parámetrico para el aprendizaje estadístico puede resultar mas sencillo ya que nuestro problema (a veces no tan trivial) se reduce a estimar los $p$ regresores aunque siempre estamos sujetos a la elección de la parametrización del modelo,
+es decir, siempre tenemos el sesgo de la elección del modelo correcto, en cambio al utilizar un enfoque no parámetrico al no asumir una forma en concreto para el modelo no nos enfrentamos a esto pero debemos de tener una muestra
+lo suficientemente grande para llegar a conclusiones razonables.

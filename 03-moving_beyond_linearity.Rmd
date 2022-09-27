@@ -1,0 +1,307 @@
+# Moving Beyond Linearity
+
+## Ejercicio 1 {-}
+
+*It was mentioned in the chapter that a cubic regression spline with one knot at $\xi$ can be obtained using a basis of the form $x$, $x^{2}$, $x^{3}$, $(x - \xi{})^{3}_{+}$ ,where $(x − \xi{})^{3}_{+} = (x − \xi)^{3}$ $if ~ x> \xi$ and equals 0 otherwise. We will now show that a function of the form*
+
+
+\begin{equation*}
+    f(x) = \beta_{0} + \beta_{1}x + \beta_{2}x^{2} + \beta_{3}x^{3} + \beta_{4}(x-\xi{})^{3}_{+}
+\end{equation*}
+
+*is indeed a cubic regression spline, regardless of the values of $\beta_{0}$, $\beta_{1}$, $\beta_{2}$, $\beta_{3}$, $\beta_{4}$.*
+
+
+- **(a) Find a cubic polynomial** 
+
+    \begin{equation*}
+        f_{1}(x) = a_{1} + b_{1}x + c_{1}x^{2} + d_{1}x^{3}
+    \end{equation*}
+
+    *such that f(x)= f1(x) for all $x \leq \xi{}$. Express $a_{1}$,$b_{1}$,$c_{1}$,$d_{1}$ in terms of $\beta_{0}$,$\beta_{1}$, $\beta_{2}$, $\beta_{3}$, $\beta_{4}$*
+
+    En este caso, al que la función $(x - \xi{})^{3}_{+}$, cada coeficiente corresponde a su análogo ordenados de mayor a menor, es decir $a_{1} = \beta_{0}$, $b_{1} = \beta_{1}$, $c_{1} = \beta_{2}$, $d_{1} = \beta_{3}$
+
+- **(b) Find a cubic polynomial** 
+
+    \begin{equation*}
+        f_{2}(x) = a_{1} + b_{1}x + c_{1}x^{2} + d_{1}x^{3}
+    \end{equation*}
+
+    *such that f(x)= f2(x) for all $x > \xi{}$. Express $a_{2}$,$b_{2}$,$c_{2}$,$d_{2}$ in terms of $\beta_{0}$,$\beta_{1}$, $\beta_{2}$, $\beta_{3}$, $\beta_{4}$ We have now established that f(x) is a piecewise polynomial.*
+
+    En caso contrario a la parte anterior la función partida se activa, primero debemos desarrollar el término $(x-\xi{})^{3}$ asociado a $\beta_{4}$
+
+    \begin{equation*}
+        \beta_{4}(x-\xi{})^{3} = \left(x^{3} + -3x^{2} \xi{} +3x\xi{}^{2} - \xi{}^{3}\right)\beta_{4} = \beta_{4}x^{3} - 3\beta_{4}x^{2} \xi{} + 3\beta_{4}x\xi{}^{2} - \beta_{4}\xi{}^{3} 
+    \end{equation*}
+
+
+    Por lo tanto, remplazando en la especificación del modelo:
+
+    \begin{equation*}
+        f(x) = \beta_{0} + \beta_{1}x + \beta_{2}x^{2} + \beta_{3}x^{3} + \beta_{4}x^{3} - 3\beta_{4}x^{2} \xi{} + 3\beta_{4}x\xi{}^{2} - \beta_{4}\xi{}^{3} 
+    \end{equation*}
+
+    Agrupando términos,
+
+    \begin{equation*}
+        f(x) = \underbrace{(\beta_{0} - \beta_{4}\xi{}^{3})}_{a_{2}} + \overbrace{(\beta_{1} + 3\beta_{4}\xi{}^{3})x}^{b_{2}} + \underbrace{(\beta_{2} - 3\beta_{4}\xi{})x^{2} (\beta_{3}}_{c_{2}} + \overbrace{\beta_{4})x^{3}}^{d_{2}}
+    \end{equation*}
+
+- **(c) Show that $f_{1}(\xi{})= f_{2}(\xi{})$. That is, $f(x)$ is continuous at $\xi{}$**
+
+    Evaluando ambas expresiones:
+
+    \begin{equation*}
+        f_{1}(\xi{}) = \beta_{0} + \beta_{1}\xi{} + \beta_{2}\xi{}^{2} + \beta_{3}\xi{}^{3}
+    \end{equation*}
+
+    \begin{equation*}
+        f_{2}(\xi{}) = \beta_{0} + \beta_{1}\xi{} + \beta_{2}\xi{}^{2} + \beta_{3}\xi{}^{3}
+    \end{equation*}
+
+    Por lo tanto, podemos asumir que el valor funcional en el salto y límite tanto por izquierda y derecha coinciden por lo tanto, la función es continua.
+
+- **(d) Show that $f^{''}_{1}(\xi)=f^{''}_{2}(\xi)$. That is $f^{''}(x)$ is continuous at $\xi$. Therefore, f(x) is indeed a cubic spline.**
+
+    Tomando primeras derivadas de cada expresión: 
+
+    \begin{equation*}
+        f^{'}_{1} =  \beta_{1} + 2\beta_{2}x + 3\beta_{3}x^{2}
+    \end{equation*}
+
+    \begin{equation*}
+        f^{'}_{2} =  (\beta_{1} + 3\beta{4}\xi{}^{2}) + 2(\beta_{2} - 3\beta_{4}\xi)x + 3(\beta_{3} + \beta_{4})x^{2}
+    \end{equation*}
+
+
+    Derivando nuevamente y evaluando:
+
+    \begin{equation*}
+        f^{''}_{1} =  2\beta_{2} + 6\beta_{3}x \longrightarrow f^{''}_{1}(\xi) = 2\beta_{2} + 6\beta_{3}\xi
+    \end{equation*}
+
+    \begin{equation*}
+        f^{''}_{2} =  2(\beta_{2}-\beta_{4})\xi + 6(\beta_{3} + \beta_{4})x \longrightarrow f^{''}_{2}(\xi{}) = 2\beta_{2} + 6\beta_{3}\xi
+    \end{equation*}
+
+
+## Ejercicio 2 {-}
+
+*Suppose that a curve $\hat{g}$ is computed to smoothly fit a set of n points using the following formula:*
+
+\begin{equation}
+    \hat{g} = arg ~ min _{g} \left(\sum_{i}^{n}{\left(y_{i} - g(x_{i})\right)^{2}} + \lambda \int{\left[g^{m}(x)\right]^{2}dx} \right)
+\end{equation}
+
+- **(a) $\lambda = \infty$, $m=0$**
+
+    En este caso, la expresión anterior queda determinada de la siguiente manera:
+
+    \begin{equation}
+        \hat{g} = arg ~ min _{g} \left(\sum_{i}^{n}{\left(y_{i} - g(x_{i})\right)^{2}} + \lambda \int{\left[g^(x)\right]^{2}dx} \right)
+    \end{equation}
+
+    Como la expresión debe ser finita, al que estamos frente a un valor extremo del parámetro de penalización la integral debe ser cero en todo su recorrido, por lo tanto $g(x) = 0$.
+
+
+
+- **(b) $\lambda = \infty$, $m=1$**
+
+    Nuevamente, al estar en el límite de $\lambda$, revisemos la expresión
+
+    \begin{equation}
+        \hat{g} = arg ~ min _{g} \left(\sum_{i}^{n}{\left(y_{i} - g(x_{i})\right)^{2}} + \lambda \int{\left[g^(x)^{1}\right]^{2}dx} \right)
+    \end{equation}
+
+    De forma análoga al se pide anterior, la derivada $g^{'}(x) = 0$, entonces $g(x) = c$.
+- **(c) $\lambda = \infty$, $m=2$**
+
+    \begin{equation}
+        \hat{g} = arg ~ min _{g} \left(\sum_{i}^{n}{\left(y_{i} - g(x_{i})\right)^{2}} + \lambda \int{\left[g^(x)^{2}\right]^{2}dx} \right)
+    \end{equation}
+
+    De forma análoga al se pide anterior, la derivada $g^{''}(x) = 0$, entonces $g(x) = ax+b$.
+
+
+- **(d) $\lambda = \infty$, $m=3$**
+
+    \begin{equation}
+        \hat{g} = arg ~ min _{g} \left(\sum_{i}^{n}{\left(y_{i} - g(x_{i})\right)^{2}} + \lambda \int{\left[g^(x)^{3}\right]^{2}dx} \right)
+    \end{equation}
+
+    De forma análoga al se pide anterior, la derivada $g^{'''}(x) = 0$, entonces $g(x) = ax^{2} + bx +c$.
+
+
+- **(e) $\lambda = 0$, $m=3$**
+
+    En este caso, estamos frente a un spline cúbico sin suavizado y la estimación es por MCO.
+
+
+## Ejercicio 3 {-}
+
+*Suppose we fit a curve with basis functions $b_{1}(X) = X$, $b_{2} = (X-1)^{2}I(X \leq 1)$. We fit the linear regression model*
+
+\begin{equation*}
+    Y = \beta_{0} + \beta_{1}b_{1}(X) + \beta_{2}b_{2}(X) + \varepsilon
+\end{equation*}
+
+*and obtain coefficient estiamtes $\hat{\beta_{0}} = 1$, $\hat{\beta_{1}} = 1$, $\hat{\beta_{2}} = -2$. Sketch the estimated curve between $X = −2$ and $X = 2$. Note the intercepts, slopes, and other relevant information*
+
+
+remplazando los coeficentes estimados, obtenemos la siguiente función de regresión:
+
+\begin{equation*}
+    \hat{f}(X) = 1 + X - 2(X-1)^{2}I(X \leq 1)
+\end{equation*}
+
+
+```{r}
+
+f <- function(x) {
+    1 + x + -2 * (x - 1)^2 * (x >= 1)
+}
+
+x <- seq(-2,2,0.01)
+
+df <- data.frame(x,y =f(x))
+
+
+library(ggplot2)
+
+ggplot(
+    df,
+    aes(x = x, y = y)
+) +
+geom_line(
+    colour = "blue",
+    size = 1.2
+) +
+geom_vline(
+    xintercept = 1,
+    colour = "green",
+    size = 1.2,
+    linetype = "dashed"
+) +
+geom_vline(xintercept = 0) +
+geom_hline(yintercept = 0) +
+annotate(
+    "text",
+    x = -1,
+    y = 1,
+    label = "f(x) = 1 +  x",
+    parse = FALSE
+) + 
+annotate(
+    "text",
+    x = 1.5,
+    y = 1,
+    label = "f(x) == -2*x^{2} +5 *x -1",
+    parse = TRUE
+) +
+theme(
+    aspect.ratio = 1
+)
+
+```
+
+Es claro que a la izquierda de $1$ la función es una recta, por tanto su pendiente es uno. A la derecha,
+la derivada es igual a $f'(x) = -4x + 5$. La ordenada en el origen para la función de la izquierda es 1, mientras
+que para la de la derecha es -1. En 1 la función es continua y derivable. La función obtiene su máximo en $X = 5/4$
+
+
+
+## Ejercicio 4 {-}
+
+*Suppose we fit a curve with basis functions $b_{1}(X) = I(0 \leq X \leq 2) - (X-1)I(1 \leq X \leq 2)$, $b_{2} = (X-3)I(3 \leq X \leq 4) + I(4 < X \leq 5)$. We fit the linear regression model*
+
+
+\begin{equation*}
+    Y = \beta_{0} + \beta_{1}b_{1}(X) + \beta_{2}b_{2}(X) + \varepsilon
+\end{equation*}
+
+*and obtain coefficient estiamtes $\hat{\beta_{0}} = 1$, $\hat{\beta_{1}} = 1$, $\hat{\beta_{2}} = 3$. Sketch the estimated curve between $X = −2$ and $X = 2$. Note the intercepts, slopes, and other relevant information*
+
+La función de regresión puede escribirse como:
+
+
+\begin{equation}
+    \hat{f}(X) = 1 + I(0 \leq X \leq 2) - (X-1)I(1 \leq X \leq 2) + 3 \times (X-3)I(3 \leq X \leq 4) + I(4 < X \leq 5)
+\end{equation}
+
+```{r}
+
+f <- function(x) {
+    1 + (x >= 0 & x <= 2) - (x-1)*(x >= 1 & x <= 2) + 3 * (x-3)*(x >= 3 & x <=4) + x*(x > 4 & x <= 5)
+}
+
+x <- seq(-2,2,0.01)
+
+df <- data.frame(x,y =f(x))
+
+
+library(ggplot2)
+
+ggplot(
+    df,
+    aes(x = x, y = y)
+) +
+geom_line(
+    colour = "blue",
+    size = 1.2
+) +
+geom_vline(
+    xintercept = 1,
+    colour = "green",
+    size = 1.2,
+    linetype = "dashed"
+) +
+geom_vline(
+    xintercept = 2,
+    colour = "green",
+    size = 1.2,
+    linetype = "dashed"
+) + 
+geom_vline(
+    xintercept = 0,
+    colour = "green",
+    size = 1.2,
+    linetype = "dashed"
+) +
+geom_vline(xintercept = 0) +
+geom_hline(yintercept = 0) +
+theme(
+    aspect.ratio = 1
+)
+
+```
+
+
+A la izquierda de cero la pendiente vale cero, entre 0 y 1, la función es contante y vale 2, mientras que luego de 1 es una recta con pendiente unitaria negativa.
+
+
+## Ejercicio 5 {-}
+
+*Consider tow curves $\hat{g}_{1}$ and $\hat{g}_{2}$, defined by*
+
+\begin{equation}
+    \hat{g}_{1} = arg ~ min _{g} \left(\sum_{i}^{n}{\left(y_{i} - g(x_{i})\right)^{2}} + \lambda \int{\left[g^{3}(x)\right]^{2}dx} \right)
+\end{equation}
+
+\begin{equation}
+    \hat{g}_{2} = arg ~ min _{g} \left(\sum_{i}^{n}{\left(y_{i} - g(x_{i})\right)^{2}} + \lambda \int{\left[g^{4}(x)\right]^{2}dx} \right)
+\end{equation}
+
+- *(a) As $\lambda{} \rightarrow \infty$, will $\hat{g}_{1}$ or $\hat{g}_{2}$ have the smaller training RSS?*
+
+    Las curvas resultantes resultan ser de órden cuadratíco y cúbico respectivamente, la segunda curva al tener un órden polinimico mayor es un modelo
+    mas flexible, por tanto, tiene un menor error de entrenamiento.
+
+- *(b) As $\lambda{} \rightarrow \infty$, will $\hat{g}_{1}$ or $\hat{g}_{2}$ have the smaller test RSS?*
+
+    Depende de como sea la relación funcional y de los datos, en base a esto podemos afirmar quien tiene un mayor RSS fuera de la muestra de entrenamiento.
+
+- *(c) As $\lambda = 0$, will $\hat{g}_{1}$ or $\hat{g}_{2}$ have the smaller training and test RSS?*
+
+    En este caso la restricción de suavizado no tiene efecto, por lo tanto $\hat{g}_{1} = \hat{g_{2}}$, en consecuencia tienen el mismo RSS tanto en la muestra de entrenamiento y testing.
