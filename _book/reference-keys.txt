@@ -2,3 +2,13 @@ sobre-esta-página
 statistical-learning
 linear-regression
 moving-beyond-linearity
+laboratorio-con-tidymodels
+laboratorio-de-splines
+b-splines
+splines-naturales
+método-lowess-regresión-local
+laboratorio-gams
+utilizando-mco
+utilizando-mgcv
+regresiones-locales
+clasificación

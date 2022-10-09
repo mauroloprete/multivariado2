@@ -2,7 +2,7 @@
 title: "Análisis Multivariado 2"
 subtitle: "Carpeta de ejercicios"
 author: "Estudiante: Mauro Loprete, Profesora: Natalia Da Silva"
-date: "2022-09-27"
+date: "2022-10-09"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]

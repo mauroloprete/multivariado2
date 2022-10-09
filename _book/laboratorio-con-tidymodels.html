@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Capítulo 5 Laboratorio con Tidymodels | Análisis Multivariado 2</title>
+<meta name="author" content="Estudiante: Mauro Loprete, Profesora: Natalia Da Silva">
+<meta name="description" content="5.1 Laboratorio de Splines  5.1.1 B-Splines  Creando el modelo  # Defino el tipo de modelo parsnip::linear_reg() %&gt;%   parsnip::set_engine(&quot;lm&quot;) %&gt;%   parsnip::set_mode('regression') %&gt;%   assign(...">
+<meta name="generator" content="bookdown 0.29 with bs4_book()">
+<meta property="og:title" content="Capítulo 5 Laboratorio con Tidymodels | Análisis Multivariado 2">
+<meta property="og:type" content="book">
+<meta property="og:description" content="5.1 Laboratorio de Splines  5.1.1 B-Splines  Creando el modelo  # Defino el tipo de modelo parsnip::linear_reg() %&gt;%   parsnip::set_engine(&quot;lm&quot;) %&gt;%   parsnip::set_mode('regression') %&gt;%   assign(...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Capítulo 5 Laboratorio con Tidymodels | Análisis Multivariado 2">
+<meta name="twitter:description" content="5.1 Laboratorio de Splines  5.1.1 B-Splines  Creando el modelo  # Defino el tipo de modelo parsnip::linear_reg() %&gt;%   parsnip::set_engine(&quot;lm&quot;) %&gt;%   parsnip::set_mode('regression') %&gt;%   assign(...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.4.0/transition.js"></script><script src="libs/bs3compat-0.4.0/tabs.js"></script><script src="libs/bs3compat-0.4.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="Carpeta de ejercicios">Análisis Multivariado 2</a>:
+        <small class="text-muted">Carpeta de ejercicios</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Sobre esta página</a></li>
+<li><a class="" href="statistical-learning.html"><span class="header-section-number">2</span> Statistical learning</a></li>
+<li><a class="" href="linear-regression.html"><span class="header-section-number">3</span> Linear regression</a></li>
+<li><a class="" href="moving-beyond-linearity.html"><span class="header-section-number">4</span> Moving Beyond Linearity</a></li>
+<li><a class="" href="references.html">References</a></li>
+<li><a class="active" href="laboratorio-con-tidymodels.html"><span class="header-section-number">5</span> Laboratorio con Tidymodels</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/mauroloprete/multivariado2">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="laboratorio-con-tidymodels" class="section level1" number="5">
+<h1>
+<span class="header-section-number">Capítulo 5</span> Laboratorio con Tidymodels<a class="anchor" aria-label="anchor" href="#laboratorio-con-tidymodels"><i class="fas fa-link"></i></a>
+</h1>
+<div id="laboratorio-de-splines" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> Laboratorio de Splines<a class="anchor" aria-label="anchor" href="#laboratorio-de-splines"><i class="fas fa-link"></i></a>
+</h2>
+<div id="b-splines" class="section level3" number="5.1.1">
+<h3>
+<span class="header-section-number">5.1.1</span> B-Splines<a class="anchor" aria-label="anchor" href="#b-splines"><i class="fas fa-link"></i></a>
+</h3>
+<div id="creando-el-modelo" class="section level4 unnumbered">
+<h4>Creando el modelo<a class="anchor" aria-label="anchor" href="#creando-el-modelo"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Defino el tipo de modelo</span></span>
+<span></span>
+<span><span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/linear_reg.html">linear_reg</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"lm"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">'regression'</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"lm_mod"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Receta : usando step_bs </span></span>
+<span></span>
+<span><span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html">recipe</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="va">age</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/step_bs.html">step_bs</a></span><span class="op">(</span></span>
+<span>        <span class="va">age</span>,</span>
+<span>        options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>          knots <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">25</span>,<span class="fl">50</span>,<span class="fl">60</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/prep.html">prep</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"recipe_bs"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Usando la receta (Si lo hago de esta manera me da diferente al libro!)</span></span>
+<span></span>
+<span><span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/workflow.html">workflow</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_model.html">add_model</a></span><span class="op">(</span><span class="va">lm_mod</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_recipe.html">add_recipe</a></span><span class="op">(</span><span class="va">recipe_bs</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">Wage</span></span>
+<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"model_wkf"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tidy.gt_table</span><span class="op">(</span><span class="va">model_wkf</span><span class="op">)</span></span></code></pre></div>
+<div id="svjglnrcqb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+html {
+  font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#svjglnrcqb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 3px;
+  border-top-color: #FFFFFF;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_title {
+  color: #333333;
+  font-size: 24px;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#svjglnrcqb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#svjglnrcqb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#svjglnrcqb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#svjglnrcqb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#svjglnrcqb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#svjglnrcqb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#svjglnrcqb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#svjglnrcqb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#svjglnrcqb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#svjglnrcqb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#svjglnrcqb .gt_row {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #F6F7F7;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#svjglnrcqb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svjglnrcqb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#svjglnrcqb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#svjglnrcqb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svjglnrcqb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#svjglnrcqb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svjglnrcqb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_striped {
+  background-color: #FAFAFA;
+}
+
+#svjglnrcqb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svjglnrcqb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#svjglnrcqb .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#svjglnrcqb .gt_left {
+  text-align: left;
+}
+
+#svjglnrcqb .gt_center {
+  text-align: center;
+}
+
+#svjglnrcqb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#svjglnrcqb .gt_font_normal {
+  font-weight: normal;
+}
+
+#svjglnrcqb .gt_font_bold {
+  font-weight: bold;
+}
+
+#svjglnrcqb .gt_font_italic {
+  font-style: italic;
+}
+
+#svjglnrcqb .gt_super {
+  font-size: 65%;
+}
+
+#svjglnrcqb .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#svjglnrcqb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#svjglnrcqb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#svjglnrcqb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#svjglnrcqb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#svjglnrcqb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#svjglnrcqb .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<div class="inline-table"><table class="gt_table">
+<thead class="gt_col_headings"><tr>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col">Coeficiente</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Estimación</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Error estandar</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Estadístico</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">P-valor</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">58.69</td>
+<td class="gt_row gt_right">4.01</td>
+<td class="gt_row gt_right">14.63</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">age_bs_1</td>
+<td class="gt_row gt_right gt_striped">102.64</td>
+<td class="gt_row gt_right gt_striped">11.45</td>
+<td class="gt_row gt_right gt_striped">8.96</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">age_bs_2</td>
+<td class="gt_row gt_right">48.76</td>
+<td class="gt_row gt_right">8.62</td>
+<td class="gt_row gt_right">5.65</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">age_bs_3</td>
+<td class="gt_row gt_right gt_striped">40.80</td>
+<td class="gt_row gt_right gt_striped">12.11</td>
+<td class="gt_row gt_right gt_striped">3.37</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>Si no uso la receta y uso la formula adentro del fit me da igual que el libro. Descubrí que existe un bug al usar <strong>step_bs()</strong> e indicar la cantidad de nodos, lo publiqué en el foro de eva.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">lm_mod</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="fu">splines</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/splines/bs.html">bs</a></span><span class="op">(</span></span>
+<span>        <span class="va">age</span>,</span>
+<span>        knots <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>            <span class="fl">25</span>,</span>
+<span>            <span class="fl">40</span>,</span>
+<span>            <span class="fl">60</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span>  <span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>    <span class="st">"model"</span>,</span>
+<span>    <span class="va">.</span>,</span>
+<span>    envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="fu">tidy.gt_table</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<div id="zetiogdgrx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+html {
+  font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#zetiogdgrx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 3px;
+  border-top-color: #FFFFFF;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_title {
+  color: #333333;
+  font-size: 24px;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#zetiogdgrx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#zetiogdgrx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#zetiogdgrx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#zetiogdgrx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#zetiogdgrx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#zetiogdgrx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#zetiogdgrx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zetiogdgrx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zetiogdgrx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#zetiogdgrx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#zetiogdgrx .gt_row {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #F6F7F7;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#zetiogdgrx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zetiogdgrx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#zetiogdgrx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#zetiogdgrx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zetiogdgrx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#zetiogdgrx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zetiogdgrx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_striped {
+  background-color: #FAFAFA;
+}
+
+#zetiogdgrx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zetiogdgrx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zetiogdgrx .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zetiogdgrx .gt_left {
+  text-align: left;
+}
+
+#zetiogdgrx .gt_center {
+  text-align: center;
+}
+
+#zetiogdgrx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#zetiogdgrx .gt_font_normal {
+  font-weight: normal;
+}
+
+#zetiogdgrx .gt_font_bold {
+  font-weight: bold;
+}
+
+#zetiogdgrx .gt_font_italic {
+  font-style: italic;
+}
+
+#zetiogdgrx .gt_super {
+  font-size: 65%;
+}
+
+#zetiogdgrx .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#zetiogdgrx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#zetiogdgrx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#zetiogdgrx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#zetiogdgrx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#zetiogdgrx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#zetiogdgrx .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<div class="inline-table"><table class="gt_table">
+<thead class="gt_col_headings"><tr>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col">Coeficiente</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Estimación</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Error estandar</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Estadístico</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">P-valor</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">60.49</td>
+<td class="gt_row gt_right">9.46</td>
+<td class="gt_row gt_right">6.39</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">splines::bs(age, knots = c(25, 40, 60))1</td>
+<td class="gt_row gt_right gt_striped">3.98</td>
+<td class="gt_row gt_right gt_striped">12.54</td>
+<td class="gt_row gt_right gt_striped">0.32</td>
+<td class="gt_row gt_right gt_striped">0.75</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))2</td>
+<td class="gt_row gt_right">44.63</td>
+<td class="gt_row gt_right">9.63</td>
+<td class="gt_row gt_right">4.64</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">splines::bs(age, knots = c(25, 40, 60))3</td>
+<td class="gt_row gt_right gt_striped">62.84</td>
+<td class="gt_row gt_right gt_striped">10.76</td>
+<td class="gt_row gt_right gt_striped">5.84</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))4</td>
+<td class="gt_row gt_right">55.99</td>
+<td class="gt_row gt_right">10.71</td>
+<td class="gt_row gt_right">5.23</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">splines::bs(age, knots = c(25, 40, 60))5</td>
+<td class="gt_row gt_right gt_striped">50.69</td>
+<td class="gt_row gt_right gt_striped">14.40</td>
+<td class="gt_row gt_right gt_striped">3.52</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))6</td>
+<td class="gt_row gt_right">16.61</td>
+<td class="gt_row gt_right">19.13</td>
+<td class="gt_row gt_right">0.87</td>
+<td class="gt_row gt_right">0.39</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div id="predición" class="section level4 unnumbered">
+<h4>Predición<a class="anchor" aria-label="anchor" href="#predici%C3%B3n"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">age.grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span></span>
+<span>    from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">Wage</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, </span>
+<span>    to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">Wage</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">predict</span> <span class="op">&lt;-</span> <span class="fu">predict_df</span><span class="op">(</span></span>
+<span>  <span class="va">model</span>,</span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.grid</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Wage</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">age</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">wage</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"gray"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">age</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">.pred</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">predict</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="st">"dashed"</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">1.4</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">age</span>,</span>
+<span>      ymin <span class="op">=</span> <span class="va">.pred_lower</span>,</span>
+<span>      ymax <span class="op">=</span> <span class="va">.pred_upper</span>,</span>
+<span>      y <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">predict</span>,</span>
+<span>    color <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.4</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span></span>
+<span>    xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>      <span class="fl">25</span>,</span>
+<span>      <span class="fl">40</span>,</span>
+<span>      <span class="fl">60</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="st">"dashed"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Edad"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Salario"</span>,</span>
+<span>    title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/bquote.html">bquote</a></span><span class="op">(</span><span class="st">"B-Splines con nodos en 25,40,60"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="4-tidymodels_files/figure-html/unnamed-chunk-4-1.png" width="672"></div>
+</div>
+</div>
+<div id="splines-naturales" class="section level3" number="5.1.2">
+<h3>
+<span class="header-section-number">5.1.2</span> Splines naturales<a class="anchor" aria-label="anchor" href="#splines-naturales"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html">recipe</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="va">age</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/step_ns.html">step_ns</a></span><span class="op">(</span></span>
+<span>        <span class="va">age</span>,</span>
+<span>        deg_free <span class="op">=</span> <span class="fl">4</span></span>
+<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/prep.html">prep</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"recipe_ns"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/workflow.html">workflow</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_model.html">add_model</a></span><span class="op">(</span><span class="va">lm_mod</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_recipe.html">add_recipe</a></span><span class="op">(</span><span class="va">recipe_ns</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">Wage</span></span>
+<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"model_wkf.ns"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="va">predict_ns</span> <span class="op">&lt;-</span> <span class="fu">predict_df</span><span class="op">(</span></span>
+<span>  <span class="va">model_wkf.ns</span>,</span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">age.grid</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">Wage</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">age</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">wage</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"gray"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">age</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">.pred</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">predict_ns</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="st">"dashed"</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"#E001B4"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">age</span>,</span>
+<span>      ymin <span class="op">=</span> <span class="va">.pred_lower</span>,</span>
+<span>      ymax <span class="op">=</span> <span class="va">.pred_upper</span>,</span>
+<span>      y <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">predict_ns</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"#E001B4"</span>, </span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.4</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">ggformula</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggformula/man/geom_spline.html">geom_spline</a></span><span class="op">(</span></span>
+<span>    df <span class="op">=</span> <span class="fl">16</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">1.2</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"#0247FF"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">ggformula</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggformula/man/geom_spline.html">geom_spline</a></span><span class="op">(</span></span>
+<span>    cv <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"red"</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">1.2</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Edad"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Salario"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"**Splines naturales y ajuste por spline**"</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"**Natural spline con** &lt;span style='color:#E001B4;'&gt;df = 4&lt;/span&gt;, &lt;span                           style='color:#0247FF;'&gt;df = 16&lt;/span&gt; y &lt;span style= 'color:#FF0202;'&gt;df por CV&lt;/span&gt;"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
+<span>    text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span></span>
+<span>      family <span class="op">=</span> <span class="st">"Meera"</span>,</span>
+<span>      size <span class="op">=</span> <span class="fl">16</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    plot.title <span class="op">=</span> <span class="fu">element_markdown</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span>,</span>
+<span>    plot.subtitle <span class="op">=</span> <span class="fu">element_markdown</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="4-tidymodels_files/figure-html/unnamed-chunk-5-1.png" width="672"></div>
+</div>
+<div id="método-lowess-regresión-local" class="section level3" number="5.1.3">
+<h3>
+<span class="header-section-number">5.1.3</span> Método lowess (Regresión local)<a class="anchor" aria-label="anchor" href="#m%C3%A9todo-lowess-regresi%C3%B3n-local"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+</div>
+<div id="laboratorio-gams" class="section level2" number="5.2">
+<h2>
+<span class="header-section-number">5.2</span> Laboratorio GAMs<a class="anchor" aria-label="anchor" href="#laboratorio-gams"><i class="fas fa-link"></i></a>
+</h2>
+<div id="utilizando-mco" class="section level3" number="5.2.1">
+<h3>
+<span class="header-section-number">5.2.1</span> Utilizando MCO<a class="anchor" aria-label="anchor" href="#utilizando-mco"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span></span>
+<span><span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html">recipe</a></span><span class="op">(</span></span>
+<span>  <span class="va">wage</span> <span class="op">~</span> <span class="va">year</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">education</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/step_ns.html">step_ns</a></span><span class="op">(</span></span>
+<span>  <span class="va">year</span>,</span>
+<span>  deg_free <span class="op">=</span> <span class="fl">4</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/step_ns.html">step_ns</a></span><span class="op">(</span></span>
+<span>  <span class="va">age</span>,</span>
+<span>  deg_free <span class="op">=</span> <span class="fl">5</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>  <span class="st">"recipe_gams"</span>,</span>
+<span>  <span class="va">.</span>,</span>
+<span>  envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/workflow.html">workflow</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_model.html">add_model</a></span><span class="op">(</span><span class="va">lm_mod</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_recipe.html">add_recipe</a></span><span class="op">(</span><span class="va">recipe_gams</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">Wage</span></span>
+<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"model_wkf.gamsMCO"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tidy.gt_table</span><span class="op">(</span></span>
+<span>  <span class="va">model_wkf.gamsMCO</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div id="lowkdyhtls" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+html {
+  font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#lowkdyhtls .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 3px;
+  border-top-color: #FFFFFF;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_title {
+  color: #333333;
+  font-size: 24px;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#lowkdyhtls .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#lowkdyhtls .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#lowkdyhtls .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#lowkdyhtls .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#lowkdyhtls .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#lowkdyhtls .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#lowkdyhtls .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lowkdyhtls .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lowkdyhtls .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#lowkdyhtls .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#lowkdyhtls .gt_row {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #F6F7F7;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#lowkdyhtls .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lowkdyhtls .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#lowkdyhtls .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#lowkdyhtls .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lowkdyhtls .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#lowkdyhtls .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lowkdyhtls .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_striped {
+  background-color: #FAFAFA;
+}
+
+#lowkdyhtls .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lowkdyhtls .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lowkdyhtls .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lowkdyhtls .gt_left {
+  text-align: left;
+}
+
+#lowkdyhtls .gt_center {
+  text-align: center;
+}
+
+#lowkdyhtls .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#lowkdyhtls .gt_font_normal {
+  font-weight: normal;
+}
+
+#lowkdyhtls .gt_font_bold {
+  font-weight: bold;
+}
+
+#lowkdyhtls .gt_font_italic {
+  font-style: italic;
+}
+
+#lowkdyhtls .gt_super {
+  font-size: 65%;
+}
+
+#lowkdyhtls .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#lowkdyhtls .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#lowkdyhtls .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#lowkdyhtls .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#lowkdyhtls .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#lowkdyhtls .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#lowkdyhtls .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<div class="inline-table"><table class="gt_table">
+<thead class="gt_col_headings"><tr>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col">Coeficiente</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Estimación</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Error estandar</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">Estadístico</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">P-valor</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">46.95</td>
+<td class="gt_row gt_right">4.70</td>
+<td class="gt_row gt_right">9.98</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">education2. HS Grad</td>
+<td class="gt_row gt_right gt_striped">10.98</td>
+<td class="gt_row gt_right gt_striped">2.43</td>
+<td class="gt_row gt_right gt_striped">4.52</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">education3. Some College</td>
+<td class="gt_row gt_right">23.47</td>
+<td class="gt_row gt_right">2.56</td>
+<td class="gt_row gt_right">9.16</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">education4. College Grad</td>
+<td class="gt_row gt_right gt_striped">38.31</td>
+<td class="gt_row gt_right gt_striped">2.55</td>
+<td class="gt_row gt_right gt_striped">15.04</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">education5. Advanced Degree</td>
+<td class="gt_row gt_right">62.55</td>
+<td class="gt_row gt_right">2.76</td>
+<td class="gt_row gt_right">22.65</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">year_ns_1</td>
+<td class="gt_row gt_right gt_striped">8.62</td>
+<td class="gt_row gt_right gt_striped">3.47</td>
+<td class="gt_row gt_right gt_striped">2.49</td>
+<td class="gt_row gt_right gt_striped">0.01</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">year_ns_2</td>
+<td class="gt_row gt_right">3.76</td>
+<td class="gt_row gt_right">2.96</td>
+<td class="gt_row gt_right">1.27</td>
+<td class="gt_row gt_right">0.20</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">year_ns_3</td>
+<td class="gt_row gt_right gt_striped">8.13</td>
+<td class="gt_row gt_right gt_striped">4.21</td>
+<td class="gt_row gt_right gt_striped">1.93</td>
+<td class="gt_row gt_right gt_striped">0.05</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">year_ns_4</td>
+<td class="gt_row gt_right">6.81</td>
+<td class="gt_row gt_right">2.40</td>
+<td class="gt_row gt_right">2.84</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">age_ns_1</td>
+<td class="gt_row gt_right gt_striped">45.17</td>
+<td class="gt_row gt_right gt_striped">4.19</td>
+<td class="gt_row gt_right gt_striped">10.77</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">age_ns_2</td>
+<td class="gt_row gt_right">38.45</td>
+<td class="gt_row gt_right">5.08</td>
+<td class="gt_row gt_right">7.57</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">age_ns_3</td>
+<td class="gt_row gt_right gt_striped">34.24</td>
+<td class="gt_row gt_right gt_striped">4.38</td>
+<td class="gt_row gt_right gt_striped">7.81</td>
+<td class="gt_row gt_right gt_striped">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">age_ns_4</td>
+<td class="gt_row gt_right">48.68</td>
+<td class="gt_row gt_right">10.57</td>
+<td class="gt_row gt_right">4.60</td>
+<td class="gt_row gt_right">0.00</td>
+</tr>
+<tr>
+<td class="gt_row gt_left gt_striped">age_ns_5</td>
+<td class="gt_row gt_right gt_striped">6.56</td>
+<td class="gt_row gt_right gt_striped">8.37</td>
+<td class="gt_row gt_right gt_striped">0.78</td>
+<td class="gt_row gt_right gt_striped">0.43</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div id="utilizando-mgcv" class="section level3" number="5.2.2">
+<h3>
+<span class="header-section-number">5.2.2</span> Utilizando mgcv<a class="anchor" aria-label="anchor" href="#utilizando-mgcv"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/gen_additive_mod.html">gen_additive_mod</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"mgcv"</span><span class="op">)</span>  <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>    <span class="st">"gam_engine"</span>,</span>
+<span>    <span class="va">.</span>,</span>
+<span>    envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/workflow.html">workflow</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_variables.html">add_variables</a></span><span class="op">(</span></span>
+<span>    outcomes <span class="op">=</span> <span class="va">wage</span>,</span>
+<span>    predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">year</span>,<span class="va">age</span>,<span class="va">education</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_model.html">add_model</a></span><span class="op">(</span></span>
+<span>    <span class="va">gam_engine</span>, </span>
+<span>    formula <span class="op">=</span> <span class="va">wage</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">year</span>,k<span class="op">=</span><span class="fl">4</span><span class="op">)</span>  <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">age</span>,k<span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="va">education</span></span>
+<span>  <span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">Wage</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>    <span class="st">"model_gam"</span>,</span>
+<span>    <span class="va">.</span>,</span>
+<span>    envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">gam_engine</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">age</span>, k <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="va">education</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>  <span class="st">"gam_m1"</span>,</span>
+<span>  <span class="va">.</span>,</span>
+<span>  envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">gam_engine</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="va">year</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">age</span>, k <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="va">education</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>  <span class="st">"gam_m2"</span>,</span>
+<span>  <span class="va">.</span>,</span>
+<span>  envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html">anova</a></span><span class="op">(</span></span>
+<span>  <span class="fu">workflowsets</span><span class="fu">::</span><span class="fu"><a href="https://hardhat.tidymodels.org/reference/hardhat-extract.html">extract_fit_engine</a></span><span class="op">(</span><span class="va">gam_m1</span><span class="op">)</span>,</span>
+<span>  <span class="fu">workflowsets</span><span class="fu">::</span><span class="fu"><a href="https://hardhat.tidymodels.org/reference/hardhat-extract.html">extract_fit_engine</a></span><span class="op">(</span><span class="va">gam_m2</span><span class="op">)</span>,</span>
+<span>  <span class="fu">workflowsets</span><span class="fu">::</span><span class="fu"><a href="https://hardhat.tidymodels.org/reference/hardhat-extract.html">extract_fit_engine</a></span><span class="op">(</span><span class="va">model_gam</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Analysis of Deviance Table</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model 1: wage ~ s(age, k = 5) + education</span></span>
+<span><span class="co">#&gt; Model 2: wage ~ year + s(age, k = 5) + education</span></span>
+<span><span class="co">#&gt; Model 3: wage ~ s(year, k = 4) + s(age, k = 5) + education</span></span>
+<span><span class="co">#&gt;   Resid. Df Resid. Dev      Df Deviance</span></span>
+<span><span class="co">#&gt; 1    2991.2    3717439                 </span></span>
+<span><span class="co">#&gt; 2    2990.2    3700651 0.98492  16788.8</span></span>
+<span><span class="co">#&gt; 3    2990.1    3700461 0.14262    189.5</span></span></code></pre></div>
+</div>
+<div id="regresiones-locales" class="section level3" number="5.2.3">
+<h3>
+<span class="header-section-number">5.2.3</span> Regresiones locales<a class="anchor" aria-label="anchor" href="#regresiones-locales"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">gam_engine</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="va">year</span> <span class="op">+</span> <span class="fu">gam</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gam/man/lo.html">lo</a></span><span class="op">(</span><span class="va">year</span>,<span class="va">age</span>,span <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span> <span class="va">education</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>  <span class="st">"gam_lo"</span>,</span>
+<span>  <span class="va">.</span>,</span>
+<span>  envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="clasificación" class="section level3" number="5.2.4">
+<h3>
+<span class="header-section-number">5.2.4</span> Clasificación<a class="anchor" aria-label="anchor" href="#clasificaci%C3%B3n"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/gen_additive_mod.html">gen_additive_mod</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">'classification'</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"mgcv"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>    <span class="st">"gam_clas_engine"</span>,</span>
+<span>    <span class="va">.</span>,</span>
+<span>    envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">Wage</span> <span class="op">%&lt;&gt;%</span></span>
+<span>  <span class="fu">tidytable</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tidytable/man/mutate..html">mutate.</a></span><span class="op">(</span></span>
+<span>    wage_dis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">wage</span> <span class="op">&gt;</span> <span class="fl">250</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">gam_clas_engine</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage_dis</span> <span class="op">~</span> <span class="va">year</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">age</span>,k<span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="va">education</span>,</span>
+<span>    family <span class="op">=</span> <span class="va">binomial</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>  <span class="st">"gam.lr.s"</span>,</span>
+<span>  <span class="va">.</span>,</span>
+<span>  envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Wage</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">tidytable</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tidytable/man/filter..html">filter.</a></span><span class="op">(</span></span>
+<span>    <span class="va">education</span> <span class="op">!=</span> <span class="st">'1. &lt; HS Grad'</span></span>
+<span>  <span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>    <span class="st">"wage_filter"</span>,</span>
+<span>    <span class="va">.</span>,</span>
+<span>    envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">gam_clas_engine</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage_dis</span> <span class="op">~</span> <span class="va">year</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">age</span>,k<span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span> <span class="va">education</span>,</span>
+<span>    family <span class="op">=</span> <span class="va">binomial</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">wage_filter</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>  <span class="st">"gam.lr.F"</span>,</span>
+<span>  <span class="va">.</span>,</span>
+<span>  envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="references.html">References</a></div>
+<div class="empty"></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#laboratorio-con-tidymodels"><span class="header-section-number">5</span> Laboratorio con Tidymodels</a></li>
+<li>
+<a class="nav-link" href="#laboratorio-de-splines"><span class="header-section-number">5.1</span> Laboratorio de Splines</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#b-splines"><span class="header-section-number">5.1.1</span> B-Splines</a></li>
+<li><a class="nav-link" href="#splines-naturales"><span class="header-section-number">5.1.2</span> Splines naturales</a></li>
+<li><a class="nav-link" href="#m%C3%A9todo-lowess-regresi%C3%B3n-local"><span class="header-section-number">5.1.3</span> Método lowess (Regresión local)</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#laboratorio-gams"><span class="header-section-number">5.2</span> Laboratorio GAMs</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#utilizando-mco"><span class="header-section-number">5.2.1</span> Utilizando MCO</a></li>
+<li><a class="nav-link" href="#utilizando-mgcv"><span class="header-section-number">5.2.2</span> Utilizando mgcv</a></li>
+<li><a class="nav-link" href="#regresiones-locales"><span class="header-section-number">5.2.3</span> Regresiones locales</a></li>
+<li><a class="nav-link" href="#clasificaci%C3%B3n"><span class="header-section-number">5.2.4</span> Clasificación</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/mauroloprete/multivariado2/blob/master/4-tidymodels.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/mauroloprete/multivariado2/edit/master/4-tidymodels.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Análisis Multivariado 2</strong>: Carpeta de ejercicios" was written by Estudiante: Mauro Loprete, Profesora: Natalia Da Silva. It was last built on 2022-10-09.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

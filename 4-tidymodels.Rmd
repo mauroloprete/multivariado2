@@ -1,0 +1,496 @@
+# Laboratorio con Tidymodels
+
+```{r,echo = FALSE}
+library(ISLR)
+library(magrittr)
+library(ggplot2)
+library(ggtext)
+
+tidy.gt_table <- function(model) {
+
+  broom::tidy(model) %>%
+    gt::gt() %>%
+    gt::cols_label(
+      term = "Coeficiente",
+      estimate = "Estimación",
+      std.error = "Error estandar",
+      statistic = "Estadístico",
+      p.value = "P-valor"
+    ) %>%
+    gt::fmt_number(
+      columns = - term,
+      decimals = 2
+    ) %>%
+    gtExtras::gt_theme_espn()
+    
+}
+
+
+predict_df <- function(model,new_data) {
+
+  ic <- predict(
+    object = model,
+    new_data,
+    type = c("conf_int")
+  )
+
+  point <- predict(
+    object = model,
+    new_data = new_data
+  )
+
+  dplyr::bind_cols(
+    age_grid = new_data,
+    point,
+    ic
+  )
+    
+}
+
+
+
+```
+
+## Laboratorio de Splines
+
+
+### B-Splines
+
+#### Creando el modelo {-}
+
+```{r}
+
+# Defino el tipo de modelo
+
+parsnip::linear_reg() %>%
+    parsnip::set_engine("lm") %>%
+    parsnip::set_mode('regression') %>%
+    assign(
+        "lm_mod",
+        .,
+        envir = .GlobalEnv
+    )
+
+# Receta : usando step_bs 
+
+recipes::recipe(
+    wage ~ age,
+    data = Wage
+) %>%
+    recipes::step_bs(
+        age,
+        options = list(
+          knots = c(25,50,60)
+        )
+    ) %>%
+    recipes::prep() %>%
+    assign(
+        "recipe_bs",
+        .,
+        envir = .GlobalEnv
+    )
+
+# Usando la receta (Si lo hago de esta manera me da diferente al libro!)
+
+workflows::workflow() %>%
+    workflows::add_model(lm_mod) %>%
+    workflows::add_recipe(recipe_bs) %>%
+    generics::fit(
+        data = Wage
+    ) %>%
+    assign(
+        "model_wkf",
+        .,
+        envir = .GlobalEnv
+    )
+
+tidy.gt_table(model_wkf)
+
+```
+
+Si no uso la receta y uso la formula adentro del fit me da igual que el libro. Descubrí que existe un bug al usar **step_bs()** e indicar la cantidad de nodos, lo publiqué en el foro de eva.
+
+
+```{r}
+
+lm_mod %>%
+  generics::fit(
+    wage ~ splines::bs(
+        age,
+        knots = c(
+            25,
+            40,
+            60
+        )
+    ),
+    data = Wage
+  ) %>% 
+  assign(
+    "model",
+    .,
+    envir = .GlobalEnv
+  )
+
+
+
+tidy.gt_table(model)
+
+
+
+```
+
+#### Predición {-}
+
+
+```{r}
+
+age.grid <- seq(
+    from = min(Wage$age), 
+    to = max(Wage$age)
+)
+
+predict <- predict_df(
+  model,
+  tibble::tibble(age = age.grid)
+)
+
+Wage %>%
+  ggplot(
+    aes(
+      x = age,
+      y = wage
+    )
+  ) + 
+  geom_point(
+    alpha = 0.7,
+    color = "gray"
+  ) + 
+  geom_line(
+    aes(
+      x = age,
+      y = .pred
+    ),
+    data = predict,
+    linetype = "dashed",
+    size = 1.4
+  ) + 
+  geom_ribbon(
+    aes(
+      x = age,
+      ymin = .pred_lower,
+      ymax = .pred_upper,
+      y = NULL
+    ),
+    data = predict,
+    color = NA, 
+    alpha = 0.4
+  ) + 
+  geom_vline(
+    xintercept = c(
+      25,
+      40,
+      60
+    ),
+    size = 1.4,
+    colour = "blue",
+    linetype = "dashed"
+  ) + 
+  labs(
+    x = "Edad",
+    y = "Salario",
+    title = bquote("B-Splines con nodos en 25,40,60")
+  ) + 
+  theme_bw()
+
+
+```
+
+### Splines naturales 
+
+```{r,warning=FALSE,message=FALSE}
+
+recipes::recipe(
+    wage ~ age,
+    data = Wage
+) %>%
+    recipes::step_ns(
+        age,
+        deg_free = 4
+    ) %>%
+    recipes::prep() %>%
+    assign(
+        "recipe_ns",
+        .,
+        envir = .GlobalEnv
+    )
+
+
+workflows::workflow() %>%
+    workflows::add_model(lm_mod) %>%
+    workflows::add_recipe(recipe_ns) %>%
+    generics::fit(
+        data = Wage
+    ) %>%
+    assign(
+        "model_wkf.ns",
+        .,
+        envir = .GlobalEnv
+    )
+
+predict_ns <- predict_df(
+  model_wkf.ns,
+  tibble::tibble(age = age.grid)
+)
+
+
+Wage %>%
+  ggplot(
+    aes(
+      x = age,
+      y = wage
+    )
+  ) + 
+  geom_point(
+    alpha = 0.7,
+    color = "gray"
+  ) + 
+  geom_line(
+    aes(
+      x = age,
+      y = .pred
+    ),
+    data = predict_ns,
+    linetype = "dashed",
+    size = 1.4,
+    color = "#E001B4"
+  ) + 
+  geom_ribbon(
+    aes(
+      x = age,
+      ymin = .pred_lower,
+      ymax = .pred_upper,
+      y = NULL
+    ),
+    data = predict_ns,
+    color = "#E001B4", 
+    alpha = 0.4
+  ) + 
+  ggformula::geom_spline(
+    df = 16,
+    size = 1.2,
+    colour = "#0247FF"
+  ) + 
+  ggformula::geom_spline(
+    cv = TRUE,
+    colour = "red",
+    size = 1.2
+  ) + 
+  labs(
+    x = "Edad",
+    y = "Salario",
+    title = "**Splines naturales y ajuste por spline**",
+    subtitle = "**Natural spline con** <span style='color:#E001B4;'>df = 4</span>, <span                           style='color:#0247FF;'>df = 16</span> y <span style= 'color:#FF0202;'>df por CV</span>"
+  ) + 
+  theme(
+    text = element_text(
+      family = "Meera",
+      size = 16
+    ),
+    plot.title = element_markdown(size = 16),
+    plot.subtitle = element_markdown(size = 16)
+  )
+
+
+```
+
+### Método lowess (Regresión local)
+
+```{r}
+
+
+
+```
+
+
+## Laboratorio GAMs
+
+### Utilizando MCO
+
+```{r}
+
+
+recipes::recipe(
+  wage ~ year + age + education,
+  data = Wage
+) %>%
+recipes::step_ns(
+  year,
+  deg_free = 4
+) %>%
+recipes::step_ns(
+  age,
+  deg_free = 5
+) %>%
+assign(
+  "recipe_gams",
+  .,
+  envir = .GlobalEnv
+)
+
+
+
+workflows::workflow() %>%
+    workflows::add_model(lm_mod) %>%
+    workflows::add_recipe(recipe_gams) %>%
+    generics::fit(
+        data = Wage
+    ) %>%
+    assign(
+        "model_wkf.gamsMCO",
+        .,
+        envir = .GlobalEnv
+    )
+
+tidy.gt_table(
+  model_wkf.gamsMCO
+)
+
+```
+
+### Utilizando mgcv
+
+```{r}
+
+parsnip::gen_additive_mod() %>%
+  parsnip::set_engine("mgcv")  %>%
+  parsnip::set_mode("regression") %>%
+  assign(
+    "gam_engine",
+    .,
+    envir = .GlobalEnv
+  )
+
+workflows::workflow() %>% 
+  workflows::add_variables(
+    outcomes = wage,
+    predictors = c(year,age,education)
+  ) %>% 
+  workflows::add_model(
+    gam_engine, 
+    formula = wage ~ s(year,k=4)  + s(age,k=5) + education
+  ) %>% 
+  generics::fit(data = Wage) %>% 
+  assign(
+    "model_gam",
+    .,
+    envir = .GlobalEnv
+  )
+
+
+gam_engine %>%
+  generics::fit(
+    wage ~ s(age, k = 5) + education, 
+    data = Wage
+) %>%
+assign(
+  "gam_m1",
+  .,
+  envir = .GlobalEnv
+)
+
+
+gam_engine %>%
+  parsnip::fit(
+    wage ~ year + s(age, k = 5) + education, 
+    data = Wage
+) %>%
+assign(
+  "gam_m2",
+  .,
+  envir = .GlobalEnv
+)
+
+
+anova(
+  workflowsets::extract_fit_engine(gam_m1),
+  workflowsets::extract_fit_engine(gam_m2),
+  workflowsets::extract_fit_engine(model_gam)
+)
+
+```
+
+### Regresiones locales
+
+
+```{r}
+
+gam_engine %>%
+  parsnip::fit(
+    wage ~ year + gam::lo(year,age,span = 0.5) + education, 
+    data = Wage
+) %>%
+assign(
+  "gam_lo",
+  .,
+  envir = .GlobalEnv
+)
+
+```
+
+### Clasificación
+
+
+```{r}
+
+parsnip::gen_additive_mod() %>%
+  parsnip::set_mode('classification') %>%
+  parsnip::set_engine("mgcv") %>%
+  assign(
+    "gam_clas_engine",
+    .,
+    envir = .GlobalEnv
+  )
+
+
+Wage %<>%
+  tidytable::mutate.(
+    wage_dis = as.factor(wage > 250)
+  )
+
+gam_clas_engine %>%
+  parsnip::fit(
+    wage_dis ~ year + s(age,k=5) + education,
+    family = binomial,
+    data = Wage
+) %>%
+assign(
+  "gam.lr.s",
+  .,
+  envir = .GlobalEnv
+)
+
+Wage %>%
+  tidytable::filter.(
+    education != '1. < HS Grad'
+  ) %>%
+  assign(
+    "wage_filter",
+    .,
+    envir = .GlobalEnv
+  )
+
+gam_clas_engine %>%
+  parsnip::fit(
+    wage_dis ~ year + s(age,k=5) + education,
+    family = binomial,
+    data = wage_filter
+) %>%
+assign(
+  "gam.lr.F",
+  .,
+  envir = .GlobalEnv
+)
+
+
+```
+

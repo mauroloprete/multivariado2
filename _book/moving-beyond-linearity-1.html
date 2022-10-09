@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Capítulo 5 Moving Beyond Linearity | Análisis Multivariado 2</title>
+<meta name="author" content="Estudiante: Mauro Loprete, Profesora: Natalia Da Silva">
+<meta name="description" content="library(ISLR) library(magrittr) # Defino el tipo de modelo parsnip::linear_reg() %&gt;%   parsnip::set_engine(&quot;lm&quot;) %&gt;%   parsnip::set_mode('regression') %&gt;%   assign(     &quot;lm_mod&quot;,     .,     envir...">
+<meta name="generator" content="bookdown 0.29 with bs4_book()">
+<meta property="og:title" content="Capítulo 5 Moving Beyond Linearity | Análisis Multivariado 2">
+<meta property="og:type" content="book">
+<meta property="og:description" content="library(ISLR) library(magrittr) # Defino el tipo de modelo parsnip::linear_reg() %&gt;%   parsnip::set_engine(&quot;lm&quot;) %&gt;%   parsnip::set_mode('regression') %&gt;%   assign(     &quot;lm_mod&quot;,     .,     envir...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Capítulo 5 Moving Beyond Linearity | Análisis Multivariado 2">
+<meta name="twitter:description" content="library(ISLR) library(magrittr) # Defino el tipo de modelo parsnip::linear_reg() %&gt;%   parsnip::set_engine(&quot;lm&quot;) %&gt;%   parsnip::set_mode('regression') %&gt;%   assign(     &quot;lm_mod&quot;,     .,     envir...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.4.0/transition.js"></script><script src="libs/bs3compat-0.4.0/tabs.js"></script><script src="libs/bs3compat-0.4.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="Carpeta de ejercicios">Análisis Multivariado 2</a>:
+        <small class="text-muted">Carpeta de ejercicios</small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Sobre esta página</a></li>
+<li><a class="" href="statistical-learning.html"><span class="header-section-number">2</span> Statistical learning</a></li>
+<li><a class="" href="linear-regression.html"><span class="header-section-number">3</span> Linear regression</a></li>
+<li><a class="" href="moving-beyond-linearity.html"><span class="header-section-number">4</span> Moving Beyond Linearity</a></li>
+<li><a class="" href="references.html">References</a></li>
+<li><a class="active" href="moving-beyond-linearity-1.html"><span class="header-section-number">5</span> Moving Beyond Linearity</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/mauroloprete/multivariado2">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="moving-beyond-linearity-1" class="section level1" number="5">
+<h1>
+<span class="header-section-number">Capítulo 5</span> Moving Beyond Linearity<a class="anchor" aria-label="anchor" href="#moving-beyond-linearity-1"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.statlearning.com">ISLR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Defino el tipo de modelo</span></span>
+<span></span>
+<span><span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/linear_reg.html">linear_reg</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"lm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">parsnip</span><span class="fu">::</span><span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">'regression'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"lm_mod"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Receta : usando step_bs </span></span>
+<span></span>
+<span><span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html">recipe</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="va">age</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/step_bs.html">step_bs</a></span><span class="op">(</span></span>
+<span>        <span class="va">age</span>,</span>
+<span>        options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>          knots <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">25</span>,<span class="fl">50</span>,<span class="fl">60</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/prep.html">prep</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"recipe_bs"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Usando la receta (Si lo hago de esta manera me da diferente al libro!)</span></span>
+<span></span>
+<span><span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/workflow.html">workflow</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_model.html">add_model</a></span><span class="op">(</span><span class="va">lm_mod</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">workflows</span><span class="fu">::</span><span class="fu"><a href="https://workflows.tidymodels.org/reference/add_recipe.html">add_recipe</a></span><span class="op">(</span><span class="va">recipe_bs</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">Wage</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>        <span class="st">"model_wkf"</span>,</span>
+<span>        <span class="va">.</span>,</span>
+<span>        envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">model_wkf</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div id="xczgmjxmbt" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#xczgmjxmbt .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xczgmjxmbt .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xczgmjxmbt .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xczgmjxmbt .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xczgmjxmbt .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xczgmjxmbt .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xczgmjxmbt .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xczgmjxmbt .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xczgmjxmbt .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xczgmjxmbt .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xczgmjxmbt .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xczgmjxmbt .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xczgmjxmbt .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xczgmjxmbt .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xczgmjxmbt .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xczgmjxmbt .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xczgmjxmbt .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xczgmjxmbt .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xczgmjxmbt .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xczgmjxmbt .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xczgmjxmbt .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xczgmjxmbt .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xczgmjxmbt .gt_left {
+  text-align: left;
+}
+
+#xczgmjxmbt .gt_center {
+  text-align: center;
+}
+
+#xczgmjxmbt .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xczgmjxmbt .gt_font_normal {
+  font-weight: normal;
+}
+
+#xczgmjxmbt .gt_font_bold {
+  font-weight: bold;
+}
+
+#xczgmjxmbt .gt_font_italic {
+  font-style: italic;
+}
+
+#xczgmjxmbt .gt_super {
+  font-size: 65%;
+}
+
+#xczgmjxmbt .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#xczgmjxmbt .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xczgmjxmbt .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#xczgmjxmbt .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#xczgmjxmbt .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#xczgmjxmbt .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#xczgmjxmbt .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<div class="inline-table"><table class="gt_table">
+<thead class="gt_col_headings"><tr>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">p.value</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">58.68868</td>
+<td class="gt_row gt_right">4.012811</td>
+<td class="gt_row gt_right">14.625328</td>
+<td class="gt_row gt_right">7.675107e-47</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">age_bs_1</td>
+<td class="gt_row gt_right">102.64368</td>
+<td class="gt_row gt_right">11.449400</td>
+<td class="gt_row gt_right">8.964984</td>
+<td class="gt_row gt_right">5.339737e-19</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">age_bs_2</td>
+<td class="gt_row gt_right">48.76204</td>
+<td class="gt_row gt_right">8.624829</td>
+<td class="gt_row gt_right">5.653681</td>
+<td class="gt_row gt_right">1.718187e-08</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">age_bs_3</td>
+<td class="gt_row gt_right">40.80330</td>
+<td class="gt_row gt_right">12.109200</td>
+<td class="gt_row gt_right">3.369612</td>
+<td class="gt_row gt_right">7.622670e-04</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Si no uso la receta y uso la formula adentro del fit me da igual que el libro.</span></span>
+<span></span>
+<span><span class="va">lm_mod</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">wage</span> <span class="op">~</span> <span class="fu">splines</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/splines/bs.html">bs</a></span><span class="op">(</span></span>
+<span>        <span class="va">age</span>,</span>
+<span>        knots <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>            <span class="fl">25</span>,</span>
+<span>            <span class="fl">40</span>,</span>
+<span>            <span class="fl">60</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">Wage</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/assign.html">assign</a></span><span class="op">(</span></span>
+<span>    <span class="st">"model"</span>,</span>
+<span>    <span class="va">.</span>,</span>
+<span>    envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/gt.html">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div id="iurdnmrrvb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#iurdnmrrvb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#iurdnmrrvb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#iurdnmrrvb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#iurdnmrrvb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#iurdnmrrvb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#iurdnmrrvb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#iurdnmrrvb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#iurdnmrrvb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#iurdnmrrvb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#iurdnmrrvb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#iurdnmrrvb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#iurdnmrrvb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#iurdnmrrvb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iurdnmrrvb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#iurdnmrrvb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#iurdnmrrvb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iurdnmrrvb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#iurdnmrrvb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iurdnmrrvb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#iurdnmrrvb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iurdnmrrvb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iurdnmrrvb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iurdnmrrvb .gt_left {
+  text-align: left;
+}
+
+#iurdnmrrvb .gt_center {
+  text-align: center;
+}
+
+#iurdnmrrvb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#iurdnmrrvb .gt_font_normal {
+  font-weight: normal;
+}
+
+#iurdnmrrvb .gt_font_bold {
+  font-weight: bold;
+}
+
+#iurdnmrrvb .gt_font_italic {
+  font-style: italic;
+}
+
+#iurdnmrrvb .gt_super {
+  font-size: 65%;
+}
+
+#iurdnmrrvb .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#iurdnmrrvb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#iurdnmrrvb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#iurdnmrrvb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#iurdnmrrvb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#iurdnmrrvb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#iurdnmrrvb .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<div class="inline-table"><table class="gt_table">
+<thead class="gt_col_headings"><tr>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">p.value</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">60.49371</td>
+<td class="gt_row gt_right">9.460394</td>
+<td class="gt_row gt_right">6.3944180</td>
+<td class="gt_row gt_right">1.863268e-10</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))1</td>
+<td class="gt_row gt_right">3.98050</td>
+<td class="gt_row gt_right">12.537648</td>
+<td class="gt_row gt_right">0.3174838</td>
+<td class="gt_row gt_right">7.508987e-01</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))2</td>
+<td class="gt_row gt_right">44.63098</td>
+<td class="gt_row gt_right">9.626267</td>
+<td class="gt_row gt_right">4.6363744</td>
+<td class="gt_row gt_right">3.697569e-06</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))3</td>
+<td class="gt_row gt_right">62.83879</td>
+<td class="gt_row gt_right">10.755235</td>
+<td class="gt_row gt_right">5.8426233</td>
+<td class="gt_row gt_right">5.691460e-09</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))4</td>
+<td class="gt_row gt_right">55.99083</td>
+<td class="gt_row gt_right">10.706284</td>
+<td class="gt_row gt_right">5.2297167</td>
+<td class="gt_row gt_right">1.814593e-07</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))5</td>
+<td class="gt_row gt_right">50.68810</td>
+<td class="gt_row gt_right">14.401846</td>
+<td class="gt_row gt_right">3.5195557</td>
+<td class="gt_row gt_right">4.387142e-04</td>
+</tr>
+<tr>
+<td class="gt_row gt_left">splines::bs(age, knots = c(25, 40, 60))6</td>
+<td class="gt_row gt_right">16.60614</td>
+<td class="gt_row gt_right">19.126431</td>
+<td class="gt_row gt_right">0.8682300</td>
+<td class="gt_row gt_right">3.853380e-01</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="predición" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> Predición<a class="anchor" aria-label="anchor" href="#predici%C3%B3n"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">age.grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span></span>
+<span>    from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">Wage</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>, </span>
+<span>    to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">Wage</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span></span>
+<span>    <span class="va">model</span>,</span>
+<span>    new_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>        age <span class="op">=</span> <span class="va">age.grid</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 63 × 1</span></span>
+<span><span class="co">#&gt;    .pred</span></span>
+<span><span class="co">#&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1  60.5</span></span>
+<span><span class="co">#&gt;  2  62.7</span></span>
+<span><span class="co">#&gt;  3  65.8</span></span>
+<span><span class="co">#&gt;  4  69.6</span></span>
+<span><span class="co">#&gt;  5  73.8</span></span>
+<span><span class="co">#&gt;  6  78.3</span></span>
+<span><span class="co">#&gt;  7  82.8</span></span>
+<span><span class="co">#&gt;  8  87.2</span></span>
+<span><span class="co">#&gt;  9  91.2</span></span>
+<span><span class="co">#&gt; 10  94.8</span></span>
+<span><span class="co">#&gt; # … with 53 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="co"># library (splines)</span></span>
+<span><span class="co"># fit &lt;- lm(wage ~ bs(age , knots = c(25, 40, 60)), data = Wage)</span></span>
+<span><span class="co"># pred &lt;- predict (fit , newdata = list (age = age.grid), se = T)</span></span>
+<span><span class="co"># plot (Wage$age , Wage$wage , col = " gray ")</span></span>
+<span><span class="co"># lines (age.grid, pred$fit , lwd = 2)</span></span>
+<span><span class="co"># lines (age.grid , pred$fit + 2 * pred$se, lty = "dashed")</span></span>
+<span><span class="co"># lines (age.grid , pred$fit - 2 * pred$se, lty = "dashed"")</span></span></code></pre></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="references.html">References</a></div>
+<div class="empty"></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#moving-beyond-linearity-1"><span class="header-section-number">5</span> Moving Beyond Linearity</a></li>
+<li><a class="nav-link" href="#predici%C3%B3n"><span class="header-section-number">5.1</span> Predición</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/mauroloprete/multivariado2/blob/master/4-tidymodels.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/mauroloprete/multivariado2/edit/master/4-tidymodels.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Análisis Multivariado 2</strong>: Carpeta de ejercicios" was written by Estudiante: Mauro Loprete, Profesora: Natalia Da Silva. It was last built on 2022-10-08.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>
